@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 
-ALLOWED_COMMANDS = ("konto", "magazyn", "zakup", "saldo", "przeglad", "exit")
+ALLOWED_COMMANDS = ("konto", "magazyn", "sprzedaz", "zakup", "saldo",
+                    "przeglad", "exit")
 
 saldo = 1200.0
 store = {
@@ -28,8 +29,6 @@ while True:
 # %% EXIT
 
     elif command == "exit":
-        msg_exit = "Działanie programu zakończone przez użytkownika."
-        operation_history.append(msg_exit)
         break
 
 # %% KONTO
@@ -46,10 +45,39 @@ while True:
 
         product_info = store.get(product_name)
 
+        msg_magazyn1 = f"Sprawdzono stan magazynowy przedmiotu {product_name}."
+
+        msg_magazyn2 = (f"Sprawdzono stan magazynowy przedmiotu {product_name}."
+                        f" Nie ma towaru '{product_name}' w magazynie!")
+
         if product_info:
             print(store[product_name])
+            operation_history.append(msg_magazyn1)
         else:
             print(f'Nie ma towaru "{product_name}" w magazynie!')
+            operation_history.append(msg_magazyn2)
+
+# %% SPRZEDAZ
+
+    elif command == 'sprzedaz':
+        product_name = input("Nazwa towaru: ")
+
+        if product_name in store.keys() and store[product_name]['count'] > 0:
+            product_count = input("Liczba sprzedawanych przedmiotów: ")
+
+            if product_count <= store[product_name]["count"]:
+                store[product_name]["count"] -= product_count
+            else:
+                print("Niewystarczająca ilość produktu. "
+                      "Na magazynie znajduje się tylko "
+                      f"{store[product_name]['count']} sztuk tego produktu")
+        elif store[product_name]["count"] == 0:
+            print("Artykuł całkowicie wyprzeany")
+        else:
+            print("Niepoprawna nazwa artykułu.")
+
+# pytanie czy przerwać transakcję?
+# ponowny input z inną ilością (dodanie elif dla niewystarczającej ilości?)
 
 # %% ZAKUP
 
@@ -63,10 +91,20 @@ while True:
 
         product_total_price = (product_price * product_count)
 
+        msg_zakup1 = ("Niewystarczające środki na koncie. Zakup towaru nie "
+                      "może być zrealziowany.")
+
+        msg_zakup2 = (f"Zakupiono {product_count} sztuk produktu "
+                      f"{product_name}, którego cena za sztukę wynosi "
+                      f"{product_price}. "
+                      f"Całkowita kwota zakupu wynosi {product_total_price}.")
+
         if product_total_price > saldo:
             print("Posiadasz za mało środków na koncie na zakup takiej ilości "
                   f"towaru za {product_total_price}. Twoje saldo wynosi {saldo}.")
+            operation_history.append(msg_zakup1)
         else:
+            operation_history.append(msg_zakup2)
             saldo -= product_total_price
             if product_name in store.keys():
                 store[product_name]["price"] = product_price
@@ -74,9 +112,6 @@ while True:
             else:
                 store[product_name] = {"price": product_price,
                                        "count": product_count}
-
-        msg_zakup = f"Zakupiono {product_name}."
-        operation_history.append(msg_zakup)
 
 # %% SALDO (ZMIANA NA KONCIE)
 
