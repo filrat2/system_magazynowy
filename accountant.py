@@ -35,7 +35,7 @@ while True:
 
     elif command == "konto":
         print(f"Stan konta: {saldo} zł")
-        msg_konto = f"Sprawdzono stan konta. Stan konta wynosi: {saldo}"
+        msg_konto = f"Sprawdzono stan konta. Stan konta wynosi: {saldo}."
         operation_history.append(msg_konto)
 
 # %% MAGAZYN
@@ -47,8 +47,8 @@ while True:
 
         msg_magazyn1 = f"Sprawdzono stan magazynowy przedmiotu {product_name}."
 
-        msg_magazyn2 = (f"Sprawdzono stan magazynowy przedmiotu {product_name}."
-                        f" Nie ma towaru '{product_name}' w magazynie!")
+        msg_magazyn2 = (f"Sprawdzono stan magazynowy przedmiotu {product_name}"
+                        f". Nie ma towaru '{product_name}' w magazynie!")
 
         if product_info:
             print(store[product_name])
@@ -62,49 +62,48 @@ while True:
     elif command == 'sprzedaz':
         product_name = input("Nazwa towaru: ").lower()
 
+        msg_sprzedaz1 = (f"Niewystarczająca ilość produktu {product_name}."
+                         " Sprzedaż towaru nie może zastać zrealizowana.")
+
         if product_name in store.keys() and store[product_name]['count'] > 0:
             while True:
                 try:
                     product_count = int(input("Liczba sprzedawanych "
                                               "przedmiotów: "))
-                    if product_count <= 0:
-                        raise ValueError()
                 except ValueError:
-                    print("Wprowadzony atrybut nie jest liczbą całkowitą "
-                          "dodatnią.")
+                    print("Wprowadzony atrybut nie jest liczbą.")
                     continue
                 else:
-                    break
+                    if product_count <= 0:
+                        print("Liczba musi być dodatnia.")
+                        pass
+                    elif product_count > store[product_name]["count"]:
+                        print("Na stanie znajduje się tylko "
+                              f"{store[product_name]['count']} sztuk tego "
+                              f"produktu {product_name}. Podaj inną liczbę "
+                              "sprzedawanych sztuk.")
+                        operation_history.append(msg_sprzedaz1)
+                        pass
+                    else:
+                        break
 
             total_purchase = store[product_name]['price'] * product_count
 
-            msg_sprzedaz1 = (f"Niewystarczająca ilość produktu {product_name}."
-                             " Sprzedaż towaru nie może zastać zrealizowana.")
-
             msg_sprzedaz2 = (f"Sprzedano {product_count} sztuk produktu "
                              f"{product_name}, którego cena za sztukę wynosi "
-                             f"{store[product_name]['price']}. "
-                             f"Całkowita kwota sprzedaży wynosi {total_purchase}.")
+                             f"{store[product_name]['price']}. Całkowita "
+                             f"kwota sprzedaży wynosi {total_purchase}.")
 
             if product_count <= store[product_name]["count"]:
                 store[product_name]["count"] -= product_count
-                saldo += store[product_name]["price"] * product_count
+                saldo += total_purchase
                 operation_history.append(msg_sprzedaz2)
-            else:
-                print("Niewystarczająca ilość produktu. "
-                      "Na magazynie znajduje się tylko "
-                      f"{store[product_name]['count']} sztuk tego produktu.")
-                operation_history.append(msg_sprzedaz1)
 
-        elif store[product_name]["count"] == 0:
+        elif product_name in store.keys() and store[product_name]["count"] == 0:
             print("Artykuł aktualnie niedostępny.")
             operation_history.append(msg_sprzedaz1)
         else:
             print("Brak artykułu o takiej nazwie.")
-
-# brak artykułu o takiej nazwie
-# pytanie czy przerwać transakcję?
-# ponowny input z inną ilością?
 
 # %% ZAKUP
 
@@ -114,25 +113,28 @@ while True:
         while True:
             try:
                 product_price = float(input("Cena: "))
-                if product_price <= 0:
-                    raise ValueError()
             except ValueError:
                 print("Wprowadzony atrybut nie jest liczbą dodatnią.")
                 continue
             else:
-                break
+                if product_price <= 0:
+                    print("Cena produktu musi być dodatnia.")
+                    pass
+                else:
+                    break
 
         while True:
             try:
                 product_count = int(input("Ilość: "))
-                if product_count <= 0:
-                    raise ValueError()
             except ValueError:
-                print("Wprowadzony atrybut nie jest liczbą całkowitą "
-                      "dodatnią.")
+                print("Wprowadzony atrybut nie jest liczbą.")
                 continue
             else:
-                break
+                if product_count <= 0:
+                    print("Liczba musi być dodatnia.")
+                    pass
+                else:
+                    break
 
         product_total_price = (product_price * product_count)
 
@@ -169,21 +171,33 @@ while True:
                 print("Wprowadzony atrybut nie jest liczbą.")
                 continue
             else:
-                break
+                if saldo_change == 0:
+                    print("Wprowadzony atrybut to 0 (zero). "
+                          "Brak zmiany na koncie")
+                    pass
+                else:
+                    break
+
+        user_comment = input("Komentarz do wpłaty/wypłaty: ")
+
+        if len(user_comment) == 0:
+            comment = "Nie wprowadzono komentarza do zmiany salda."
+        else:
+            comment = f"Komentarz do zmiany: '{user_comment}'."
 
         if (saldo + saldo_change) > 0:
             saldo += saldo_change
 
             msg_saldo_wplata = (f"Wpłata kwoty {saldo_change} "
                                 "na konto zakończona powodzeniem. "
-                                f"Twoje saldo wynosi aktualnie {saldo}.")
+                                f"Twoje saldo wynosi aktualnie {saldo}. {comment}")
 
-            msg_saldo_wyplata = (f"Wypłata kwoty {abs(saldo_change)} z konta"
+            msg_saldo_wyplata = (f"Wypłata kwoty {abs(saldo_change)} z konta "
                                  "zakończona powodzeniem. "
-                                 f"Twoje saldo wynosi aktualnie {saldo}.")
+                                 f"Twoje saldo wynosi aktualnie {saldo}. {comment}")
 
             if saldo_change > 0:
-                operation_history.append(msg_saldo_wplata)
+                operation_history.append((msg_saldo_wplata))
             else:
                 operation_history.append(msg_saldo_wyplata)
 
