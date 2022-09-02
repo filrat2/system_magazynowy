@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 
-ALLOWED_COMMANDS = ("konto", "magazyn", "sprzedaz", "zakup", "saldo",
+ALLOWED_COMMANDS = ("sprzedaz", "zakup", "saldo", "konto", "magazyn",
                     "przeglad", "exit")
 
 saldo = 1200.0
@@ -41,7 +41,7 @@ while True:
 # %% MAGAZYN
 
     elif command == "magazyn":
-        product_name = input("Nazwa towaru: ")
+        product_name = input("Nazwa towaru: ").lower()
 
         product_info = store.get(product_name)
 
@@ -60,34 +60,66 @@ while True:
 # %% SPRZEDAZ
 
     elif command == 'sprzedaz':
-        product_name = input("Nazwa towaru: ")
+        product_name = input("Nazwa towaru: ").lower()
 
         if product_name in store.keys() and store[product_name]['count'] > 0:
-            product_count = input("Liczba sprzedawanych przedmiotów: ")
+
+            while True:
+                try:
+                    product_count = int(input("Liczba sprzedawanych "
+                                              "przedmiotów: "))
+                    if product_count <= 0:
+                        raise ValueError()
+                except ValueError:
+                    print("Wprowadzony atrybut nie jest liczbą całkowitą "
+                          "dodatnią.")
+                    continue
+                else:
+                    break
 
             if product_count <= store[product_name]["count"]:
                 store[product_name]["count"] -= product_count
+                saldo += store[product_name]["price"] * product_count
             else:
                 print("Niewystarczająca ilość produktu. "
                       "Na magazynie znajduje się tylko "
-                      f"{store[product_name]['count']} sztuk tego produktu")
+                      f"{store[product_name]['count']} sztuk tego produktu.")
+
         elif store[product_name]["count"] == 0:
-            print("Artykuł całkowicie wyprzeany")
+            print("Artykuł aktualnie niedostępny.")
         else:
-            print("Niepoprawna nazwa artykułu.")
+            print("Brak artykułu o takiej nazwie.")
 
 # pytanie czy przerwać transakcję?
-# ponowny input z inną ilością (dodanie elif dla niewystarczającej ilości?)
+# ponowny input z inną ilością?
 
 # %% ZAKUP
 
     elif command == "zakup":
-        product_name = input("Nazwa towaru: ")
-        product_price = input("Cena: ")
-        product_count = input("Ilość: ")
+        product_name = input("Nazwa towaru: ").lower()
 
-        product_price = float(product_price)
-        product_count = int(product_count)
+        while True:
+            try:
+                product_price = float(input("Cena: "))
+                if product_price <= 0:
+                    raise ValueError()
+            except ValueError:
+                print("Wprowadzony atrybut nie jest liczbą dodatnią.")
+                continue
+            else:
+                break
+
+        while True:
+            try:
+                product_count = int(input("Ilość: "))
+                if product_count <= 0:
+                    raise ValueError()
+            except ValueError:
+                print("Wprowadzony atrybut nie jest liczbą całkowitą "
+                      "dodatnią.")
+                continue
+            else:
+                break
 
         product_total_price = (product_price * product_count)
 
@@ -101,7 +133,8 @@ while True:
 
         if product_total_price > saldo:
             print("Posiadasz za mało środków na koncie na zakup takiej ilości "
-                  f"towaru za {product_total_price}. Twoje saldo wynosi {saldo}.")
+                  f"towaru za {product_total_price}. Twoje saldo wynosi "
+                  f"{saldo}.")
             operation_history.append(msg_zakup1)
         else:
             operation_history.append(msg_zakup2)
@@ -116,9 +149,14 @@ while True:
 # %% SALDO (ZMIANA NA KONCIE)
 
     elif command == "saldo":
-        saldo_change = input("Kwota: ")
-
-        saldo_change = float(saldo_change)
+        while True:
+            try:
+                saldo_change = float(input("Kwota: "))
+            except ValueError:
+                print("Wprowadzony atrybut nie jest liczbą.")
+                continue
+            else:
+                break
 
         if (saldo + saldo_change) > 0:
             saldo += saldo_change
@@ -138,7 +176,7 @@ while True:
 
         else:
             print("Posiadasz za mało środków na koncie na wypłacenie takiej "
-                  f"kwoty. Twoje saldo wynosi {saldo, 2}.")
+                  f"kwoty. Twoje saldo wynosi {saldo}.")
 
             msg_saldo_abort = ("Wypłata środków zakończona niepowodzeniem. "
                                "Posiadasz za mało środków na koncie na "
