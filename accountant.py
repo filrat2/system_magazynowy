@@ -63,7 +63,6 @@ while True:
         product_name = input("Nazwa towaru: ").lower()
 
         if product_name in store.keys() and store[product_name]['count'] > 0:
-
             while True:
                 try:
                     product_count = int(input("Liczba sprzedawanych "
@@ -77,19 +76,33 @@ while True:
                 else:
                     break
 
+            total_purchase = store[product_name]['price'] * product_count
+
+            msg_sprzedaz1 = (f"Niewystarczająca ilość produktu {product_name}."
+                             " Sprzedaż towaru nie może zastać zrealizowana.")
+
+            msg_sprzedaz2 = (f"Sprzedano {product_count} sztuk produktu "
+                             f"{product_name}, którego cena za sztukę wynosi "
+                             f"{store[product_name]['price']}. "
+                             f"Całkowita kwota sprzedaży wynosi {total_purchase}.")
+
             if product_count <= store[product_name]["count"]:
                 store[product_name]["count"] -= product_count
                 saldo += store[product_name]["price"] * product_count
+                operation_history.append(msg_sprzedaz2)
             else:
                 print("Niewystarczająca ilość produktu. "
                       "Na magazynie znajduje się tylko "
                       f"{store[product_name]['count']} sztuk tego produktu.")
+                operation_history.append(msg_sprzedaz1)
 
         elif store[product_name]["count"] == 0:
             print("Artykuł aktualnie niedostępny.")
+            operation_history.append(msg_sprzedaz1)
         else:
             print("Brak artykułu o takiej nazwie.")
 
+# brak artykułu o takiej nazwie
 # pytanie czy przerwać transakcję?
 # ponowny input z inną ilością?
 
