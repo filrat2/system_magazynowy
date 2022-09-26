@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 
-# function for import products from *.csv file
+# function for import store stock from *.csv file
 
 def read_store(store, filename):
     with open(filename, 'r') as file:

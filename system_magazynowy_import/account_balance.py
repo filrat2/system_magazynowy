@@ -17,13 +17,6 @@ def write_account_balance(account_balance, account_balance_file):
     with open(account_balance_file, 'w') as file:
         file.write(f"{account_balance}")
 
-# %% account balance display function
-
-
-def display_account_balance(account_balance):
-    print(account_balance)
-
-
 # %% account balance change function
 
 
@@ -78,6 +71,6 @@ def change_account_balance(account_balance, operation_history):
                     f"Twoje saldo wynosi {account_balance}.")
         operation_history.append(msg_fail)
 
-    # return account_balance
+    return account_balance
 
 # %%

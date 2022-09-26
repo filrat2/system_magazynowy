@@ -1,5 +1,7 @@
 # -*- coding: utf-8 -*-
 
+# function for checking stock
+
 def warehouse_checker(product_name, store, operation_history):
 
     product_info = store.get(product_name)

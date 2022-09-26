@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 
-# function for sell items from store
+# function to sell items from store
 
 def sell(product_name, store, account_balance, operation_history):
 
@@ -48,3 +48,4 @@ def sell(product_name, store, account_balance, operation_history):
         operation_history.append(message_fail)
     else:
         print("Brak artykułu o takiej nazwie.")
+    return account_balance

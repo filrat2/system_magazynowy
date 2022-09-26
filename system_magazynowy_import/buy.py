@@ -1,5 +1,7 @@
 # -*- coding: utf-8 -*-
 
+# function to buy items for your store
+
 def buy(product_name, store, account_balance, operation_history):
 
     while True:
@@ -52,3 +54,4 @@ def buy(product_name, store, account_balance, operation_history):
         else:
             store[product_name] = {'product_price': product_price,
                                    'product_count': product_count}
+    return account_balance

@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 
-# function for export/save products to *.csv file
+# function for export/save store stock to *.csv file
 
 def write_store(store, filename):
     with open(filename, 'w') as file:
